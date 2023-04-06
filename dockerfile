@@ -1,10 +1,15 @@
-FROM tomcat:9
-WORKDIR /usr/local/tomcat/webapps/
+FROM ubuntu:latest AS build
 
-RUN \
-  mv /usr/local/tomcat/webapps /usr/local/tomcat/webapps2 && \
-  mv /usr/local/tomcat/webapps.dist /usr/local/tomcat/webapps
+RUN apt-get update
+RUN apt-get install openjdk-17-jdk -y
+COPY . .
 
-ADD /build/libs/trident.war /usr/local/tomcat/webapps/
+RUN ./gradlew bootJar --no-daemon
+
+FROM openjdk:17-jdk-slim
 
 EXPOSE 8080
+
+COPY --from=build /build/libs/demo-1.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
