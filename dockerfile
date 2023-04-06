@@ -1,4 +1,4 @@
-FROM openjdk:18
-
-ADD /build/libs/admin.jar /home/admin.jar
-CMD ["java","-jar","/home/admin.jar"]
+FROM eclipse-temurin:17-jdk-alpine
+VOLUME /tmp
+COPY target/*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
